@@ -1,0 +1,80 @@
+<% if notice %>
+  <p class="text-green-600 mb-4 text-sm"><%= notice %></p>
+<% end %>
+
+<h1 class="text-2xl font-bold mb-2">Devices & Sessions</h1>
+<small>
+  <%= link_to "← Back to app", main_app.root_path, class: "text-blue-600 hover:underline text-sm" %>
+</small>
+
+<h2 class="text-xl font-semibold mt-6 mb-4">Sessions</h2>
+<div id="sessions" class="overflow-x-auto">
+  <table class="min-w-full bg-white border border-gray-200 shadow rounded-lg text-sm">
+    <thead class="bg-gray-100 text-gray-700">
+      <tr>
+        <th class="px-4 py-2 text-left">User Agent</th>
+        <th class="px-4 py-2 text-left whitespace-nowrap">IP Address</th>
+        <th class="px-4 py-2 text-left whitespace-nowrap">Created At</th>
+        <th class="px-4 py-2 text-left"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @sessions.each do |session| %>
+        <%= content_tag :tr, id: dom_id(session), class: "border-t" do %>
+          <td class="px-4 py-2"><%= session.user_agent %></td>
+          <td class="px-4 py-2 whitespace-nowrap"><%= session.ip_address %></td>
+          <td class="px-4 py-2"><%= session.created_at.strftime('%B %d, %Y %H:%M') %></td>
+          <td class="px-4 py-2">
+            <%= button_to "Log out", session, method: :delete,
+                          class: "bg-red-600 hover:bg-red-700 text-white font-medium py-1 px-3 rounded text-sm" %>
+          </td>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<% if ActionAuth.configuration.webauthn_enabled? %>
+  <% if current_user.second_factor_enabled? %>
+    <h3 class="text-xl font-semibold mt-8 mb-4">Your Security Keys</h3>
+    <div class="overflow-x-auto">
+      <table class="min-w-full bg-white border border-gray-200 shadow rounded-lg text-sm">
+        <thead class="bg-gray-100 text-gray-700">
+          <tr>
+            <th class="px-4 py-2 text-left">Key</th>
+            <th class="px-4 py-2 text-left">Type</th>
+            <th class="px-4 py-2 text-left whitespace-nowrap">Registered On</th>
+            <th class="px-4 py-2 text-left whitespace-nowrap"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% current_user.webauthn_credentials.each do |credential| %>
+            <%= content_tag :tr, id: dom_id(credential), class: "border-t" do %>
+              <td class="px-4 py-2"><%= credential.nickname %></td>
+              <td class="px-4 py-2"><%= credential.key_type %></td>
+              <td class="px-4 py-2 whitespace-nowrap"><%= credential.created_at.strftime('%B %d, %Y') %></td>
+              <td class="px-4 py-2 whitespace-nowrap">
+                <%= button_to "Delete", credential, method: :delete,
+                              class: "bg-red-600 hover:bg-red-700 text-white font-medium py-1 px-3 rounded text-sm" %>
+              </td>
+            <% end %>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-4">
+      <%= button_to "Register new Security Key",
+                    new_webauthn_credential_path,
+                    method: :get,
+                    class: "bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded" %>
+    </div>
+  <% else %>
+    <h2 class="text-xl font-semibold mt-8 mb-2">Enable Two-Factor Authentication</h2>
+    <div>
+      <%= link_to "Add a passkey",
+                  new_webauthn_credential_path,
+                  class: "bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded inline-block" %>
+    </div>
+  <% end %>
+<% end %>

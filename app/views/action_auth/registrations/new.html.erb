@@ -1,0 +1,56 @@
+<div class="min-h-screen flex flex-col justify-center items-center bg-gray-50 px-4">
+  <h1 class="text-3xl font-bold mb-6">Sign up</h1>
+
+  <%= form_with(url: sign_up_path, class: "w-full max-w-md bg-white p-6 rounded shadow") do |form| %>
+    <% if @user.errors.any? %>
+      <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+        <h2 class="font-semibold mb-2"><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
+        <ul class="list-disc list-inside">
+          <% @user.errors.each do |error| %>
+            <li><%= error.full_message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="mb-4">
+      <%= form.label :email, class: "block mb-1 font-medium" %>
+      <%= form.email_field :email, value: @user.email, required: true, autofocus: true, autocomplete: "email",
+          class: "w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+    </div>
+
+    <div class="mb-4">
+      <%= form.label :password, class: "block mb-1 font-medium" %>
+      <%= form.password_field :password, required: true, autocomplete: "new-password",
+          class: "w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+      <div class="text-sm text-gray-500 mt-1">12 characters minimum.</div>
+    </div>
+
+    <div class="mb-4">
+      <%= form.label :password_confirmation, class: "block mb-1 font-medium" %>
+      <%= form.password_field :password_confirmation, required: true, autocomplete: "new-password",
+          class: "w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+    </div>
+
+    <div>
+      <%= form.submit "Sign up", class: "w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded transition" %>
+    </div>
+  <% end %>
+
+  <div class="mt-6 text-center text-sm text-gray-600 space-x-2">
+    <%= link_to "Sign In", sign_in_path, class: "hover:underline" %> |
+    <% if ActionAuth.configuration.magic_link_enabled? %>
+      <%= link_to "Magic Link", new_magics_requests_path, class: "hover:underline" %> |
+    <% end %>
+    <% if ActionAuth.configuration.sms_auth_enabled? %>
+      <%= link_to "SMS Auth", new_sms_auths_requests_path, class: "hover:underline" %> |
+    <% end %>
+    <% if ActionAuth.configuration.passkey_only? %>
+      <%= link_to "Passkey", new_sessions_passkey_path, class: "hover:underline" %> |
+    <% end %>
+    <%= link_to "Reset Password", new_identity_password_reset_path, class: "hover:underline" %>
+    <% if ActionAuth.configuration.verify_email_on_sign_in %>
+      | <%= link_to "Verify Email", identity_email_verification_path, class: "hover:underline" %>
+    <% end %>
+  </div>
+</div>

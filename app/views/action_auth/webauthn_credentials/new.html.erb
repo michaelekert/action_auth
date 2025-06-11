@@ -1,0 +1,34 @@
+<div class="flex items-center justify-center min-h-screen bg-gray-50 px-4">
+  <div class="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-center text-3xl font-semibold mb-6">Add a security key</h2>
+
+    <%= form_with scope: :webauthn_credential,
+                  url: options_for_webauthn_credentials_path,
+                  id: "webauthn_credential_form",
+                  data: {
+                    controller: "add-credential",
+                    action: "ajax:success->add-credential#create",
+                  } do |form| %>
+
+      <div class="mb-4">
+        <%= form.text_field :nickname,
+                            autofocus: true,
+                            placeholder: "New Security Key nickname",
+                            required: true,
+                            class: "w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+      </div>
+
+      <div class="mb-6 text-center">
+        <%= form.submit "Add Security Key",
+                        class: "bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-md" %>
+      </div>
+
+      <div class="text-center text-sm text-gray-600">
+        Insert a USB key, if necessary, and tap it.
+      </div>
+
+    <% end %>
+  </div>
+</div>
+
+
